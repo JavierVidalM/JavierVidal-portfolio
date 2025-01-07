@@ -6,6 +6,12 @@ export default {
     ],
     theme: {
       extend: {
+        boxShadow: {
+          'inner': 'inset 0px 0px 12px 5px #e2e8f01f;',
+        },
+        borderWidth: {
+          '1': '1px',
+        },
         gridTemplateColumns: {
           '16': 'repeat(16, minmax(0, 1fr))',
           '18': 'repeat(18, minmax(0, 1fr))',

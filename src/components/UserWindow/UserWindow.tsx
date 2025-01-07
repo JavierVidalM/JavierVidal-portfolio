@@ -1,8 +1,9 @@
+import { WindowTypes } from "../../types/windowTypes";
 import WindowComponent from "../WindowComponent.tsx/WindowComponent";
 
-function UserWindow() {
+function UserWindow({item, onClose, onMinimize}: WindowTypes) {
   return (
-    <WindowComponent>
+    <WindowComponent item={item} onClose={onClose} onMinimize={onMinimize}>
         <div>
             <p>hola</p>
         </div>

@@ -1,6 +1,6 @@
 export const defaultItems = [
   {
-    id: 1,
+    id: 0,
     name: "Javier Vidal",
     row: 1,
     col: 1,
@@ -10,7 +10,7 @@ export const defaultItems = [
     selected: false,
   },
   {
-    id: 2,
+    id: 1,
     name: "Sobre mí",
     row: 2,
     col: 1,
@@ -20,7 +20,7 @@ export const defaultItems = [
     selected: false,
   },
   {
-    id: 3,
+    id: 2,
     name: "Experiencia laboral",
     row: 3,
     col: 1,

@@ -3,18 +3,23 @@ import backgroundImage from "../../assets/6201771.jpg";
 // import chevronRight from "../../assets/chevron_right.svg";
 import { defaultItems } from "../../utils/desktopItems";
 import "./DesktopScreen.css";
+import UserWindow from "../UserWindow/UserWindow";
+import { ItemType } from "../../types/windowTypes";
 
 function DesktopScreen() {
   const [isVisible, setIsVisible] = useState(false);
   const [time, setTime] = useState<string>("00:00");
   const [date, setDate] = useState<string>("01/01/2025");
   // const [contextMenuPosition, setContextMenuPosition] = useState({x: 0, y: 0,});
-  const [dragStartOffset, setDragStartOffset] = useState({ x: 0, y: 0 });
+  // const [dragStartOffset, setDragStartOffset] = useState({ x: 0, y: 0 });
   // const [isContextMenuVisible, setIsContextMenuVisible] = useState(false);
   // const [viewSubMenuVisible, setViewSubMenuVisible] = useState(false);
   // const [sortSubMenuVisible, setSortSubMenuVisible] = useState(false);
   const [items, setItems] = useState(defaultItems);
   // const [gridSize, setGridSize] = useState({ cols: 18, rows: 8 });
+  const [windowShow, setWindowShow] = useState(false);
+  const [oppenedWindows, setOppenedWindows] = useState<ItemType[]>([]);
+  const [minimizedWindows, setMinimizedWindows] = useState<ItemType[]>([]);
 
   const TASKBAR_HEIGHT = window.innerHeight * 0.055;
   const gridSize = { cols: 18, rows: 8 };
@@ -30,7 +35,6 @@ function DesktopScreen() {
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      console.log(now);
 
       setTime(
         now.getHours().toString().padStart(2, "0") +
@@ -94,11 +98,11 @@ function DesktopScreen() {
   };
 
   const handleDragStart = (event: React.DragEvent, id: number) => {
-    const rect = (event.target as HTMLElement).getBoundingClientRect();
-    setDragStartOffset({
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top,
-    });
+    // const rect = (event.target as HTMLElement).getBoundingClientRect();
+    // setDragStartOffset({
+    //   x: event.clientX - rect.left,
+    //   y: event.clientY - rect.top,
+    // });
     event.dataTransfer.setData("text/plain", id.toString());
   };
 
@@ -163,13 +167,28 @@ function DesktopScreen() {
     );
   };
 
-  const handleDoubleClick = (id: number) => {
-    
-  }
+  const handleDoubleClick = (item: ItemType) => {
+    setWindowShow(true);
+    setOppenedWindows([...oppenedWindows, item]);
+  };
+
+  const handleMinimize = (item: ItemType) => {
+    setMinimizedWindows([...minimizedWindows, item]);
+    setOppenedWindows(oppenedWindows.filter((i) => i.id !== item.id));
+  };
+
+  const handleRestore = (item: ItemType) => {
+    setMinimizedWindows(minimizedWindows.filter((win) => win.id !== item.id));
+    setOppenedWindows([...oppenedWindows, item]);
+  };
+  const onClose = (item: ItemType) => {
+    setOppenedWindows(oppenedWindows.filter((i) => i.id !== item.id));
+    oppenedWindows.filter((i) => i.id !== item.id);
+  };
 
   return (
     <div
-      className={`flex overflow-hidden w-screen h-screen${
+      className={`flex absolute overflow-hidden w-screen h-screen${
         !backgroundImage ? "bg-violet-700" : ""
       } align-middle  justify-center select-none ${
         isVisible ? "opacity-100" : "opacity-100"
@@ -185,6 +204,7 @@ function DesktopScreen() {
         alt="desktop screen image"
         className="w-full h-full object-cover fixed top-0 left-0 -z-10"
       />
+
       <div
         className="desktop-container p-10"
         style={{ position: "relative", width: "100%", height: "100%" }}
@@ -201,7 +221,7 @@ function DesktopScreen() {
             }`}
             onDragStart={(event) => handleDragStart(event, item.id)}
             onClick={() => handleSelectItem(item.id)}
-            onDoubleClick={}
+            onDoubleClick={() => handleDoubleClick(item)}
             draggable
             style={{
               position: "absolute",
@@ -212,24 +232,59 @@ function DesktopScreen() {
               margin: 10,
             }}
           >
-            <div className="flex w-full items-center justify-center text-6xl align-top">
+            <div className="w-full  items-center justify-center text-center text-6xl self-center">
               {item.icon}
+              <p className="flex w-full text-base text-center items-center justify-center text-white align-text-bottom pt-4">
+                {item.name}
+              </p>
             </div>
-            <p className="absolute w-full text-center text-white bottom-0">
-              {item.name}
-            </p>
           </div>
         ))}
       </div>
+      {oppenedWindows.map((item) => (
+        <UserWindow
+          item={item}
+          onClose={() => onClose(item)}
+          onMinimize={() => handleMinimize(item)}
+        />
+      ))}
+
       {/* Taskbar */}
       <div className="absolute w-full h-[5.5%] bottom-0 bg-black/30 backdrop-blur-lg items-center">
         {/* Taskbar home button */}
-        <div className="flex aboluste w-full h-full items-center justify-start px-[1%]">
-          <div className="flex items-center justify-center button-inner-shadow px-[6px] h-[82%] rounded-md">
+        <div className="flex absolute w-full h-full items-center justify-start px-[1%] space-x-2">
+          <div className="flex items-center justify-center px-[6px] h-[82%] rounded-md hover:shadow-inner">
             <button className="bg-gradient-to-tl from-[#0277d3] to-[#4bd0fe] aspect-square h-[75%] text-slate-200 font-bold rounded-md text-center items-center justify-center ">
               JV
             </button>
           </div>
+
+          {/* Taskbar oppened windows */}
+          <div className="flex h-full items-center justify-center mx-2">
+            {oppenedWindows.map((item) => (
+              <div
+                key={item.id}
+                className="flex items-center justify-center shadow-inner px-[6px] h-[82%] rounded-md backdrop-blur-0 bg-slate-200/5 hover:bg-slate-200/10 transition-all duration-100"
+                onClick={() => handleMinimize(item)}
+              >
+                <button className="aspect-square h-[75%] text-slate-200 font-bold rounded-md text-center items-center justify-center text-2xl">
+                  {item.icon}
+                </button>
+              </div>
+            ))}
+            {minimizedWindows.map((item) => (
+              <div
+                key={item.id}
+                className="flex items-center justify-center hover:shadow-inner px-[6px] h-[82%] rounded-md transition-all duration-100"
+                onClick={() => handleRestore(item)}
+              >
+                <button className="aspect-square h-[75%] text-slate-200 font-bold rounded-md text-center items-center justify-center text-2xl">
+                  {item.icon}
+                </button>
+              </div>
+            ))}
+          </div>
+
           {/* taskbar date/hour */}
           <div className="absolute right-0 px-[1%] items-center justify-center text-white font-light text-sm text-center">
             <p>{time}</p>
@@ -237,6 +292,7 @@ function DesktopScreen() {
           </div>
         </div>
       </div>
+
       {/* {isContextMenuVisible && (
         <div
           className="absolute bg-white w-2/12 rounded-md p-2 justify-center items-center"
