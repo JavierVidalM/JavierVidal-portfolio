@@ -21,7 +21,7 @@ function LockScreen({ onUnlock }: { onUnlock: () => void }) {
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      console.log(now)
+      console.log(now);
 
       setTime(
         now.getHours().toString().padStart(2, "0") +
@@ -31,7 +31,10 @@ function LockScreen({ onUnlock }: { onUnlock: () => void }) {
     };
 
     updateTime();
-    const intervalId = setInterval(updateTime, 60000 - new Date().getSeconds() * 1000);
+    const intervalId = setInterval(
+      updateTime,
+      60000 - new Date().getSeconds() * 1000
+    );
 
     return () => clearInterval(intervalId);
   }, []);
@@ -114,6 +117,7 @@ function LockScreen({ onUnlock }: { onUnlock: () => void }) {
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
+      onContextMenu={(event) => event.preventDefault()}
     >
       <img
         src={backgroundImage}
@@ -139,7 +143,16 @@ function LockScreen({ onUnlock }: { onUnlock: () => void }) {
                 {day}, {date}
               </h2>
             </div>
-            <div className="rounded-lg bg-black/15 absolute bottom-[5%] left-[5%] backdrop-blur-md p-3 group hover:bg-black/40 transition-all">
+            <div
+              className="rounded-lg bg-black/15 absolute bottom-[5%] left-[5%] backdrop-blur-md p-3 group hover:bg-black/40 transition-all cursor-pointer"
+              onClick={(event) => {
+                event.stopPropagation();
+                window.open(
+                  `https://weather.com/weather/today/l/${weather.nearest_area[0].latitude},${weather.nearest_area[0].longitude}`,
+                  "_blank"
+                );
+              }}
+            >
               <p className="text-white font-medium text-md">
                 {weather.nearest_area[0].areaName[0].value},{" "}
                 {weather.nearest_area[0].country[0].value}
@@ -168,18 +181,8 @@ function LockScreen({ onUnlock }: { onUnlock: () => void }) {
                   </div>
                 </div>
               </div>
-              <div className="flex items-center justify-center">
-                <button
-                  className="text-slate-300"
-                  onClick={() =>
-                    window.open(
-                      `https://weather.com/weather/today/l/${weather.nearest_area[0].latitude},${weather.nearest_area[0].longitude}`,
-                      "_blank"
-                    )
-                  }
-                >
-                  Ver más
-                </button>
+              <div className="flex items-center justify-center text-slate-300">
+                Ver más
               </div>
             </div>
           </div>
@@ -191,6 +194,10 @@ function LockScreen({ onUnlock }: { onUnlock: () => void }) {
                 transform: "scale(1)",
                 transition: "transform 0s",
               }}
+              onClick={() => {
+                setIsFocused(true);
+                setShowAdditionalContent(false);
+              }}
             >
               <div
                 className="items-center justify-center text-center top-[20%] absolute"
@@ -198,6 +205,7 @@ function LockScreen({ onUnlock }: { onUnlock: () => void }) {
                   transform: "scale(0.85)",
                   animation: "expand 0.3s forwards",
                 }}
+                onClick={(event) => event.stopPropagation()}
               >
                 <img
                   src="https://unavatar.io/github/JavierVidalM"

@@ -1,18 +1,8 @@
 export const defaultItems = [
   {
-    id: 0,
-    name: "Javier Vidal",
-    row: 1,
-    col: 1,
-    prevRow: 1,
-    prevCol: 1,
-    icon: "🖥️",
-    selected: false,
-  },
-  {
     id: 1,
     name: "Sobre mí",
-    row: 2,
+    row: 1,
     col: 1,
     prevRow: 2,
     prevCol: 1,
@@ -22,7 +12,7 @@ export const defaultItems = [
   {
     id: 2,
     name: "Experiencia laboral",
-    row: 3,
+    row: 2,
     col: 1,
     prevRow: 3,
     prevCol: 1,
@@ -32,7 +22,7 @@ export const defaultItems = [
   {
     id: 3,
     name: "Habilidades",
-    row: 4,
+    row: 3,
     col: 1,
     prevRow: 4,
     prevCol: 1,
@@ -42,7 +32,7 @@ export const defaultItems = [
   {
     id: 4,
     name: "Proyectos",
-    row: 5,
+    row: 4,
     col: 1,
     prevRow: 5,
     prevCol: 1,
@@ -52,7 +42,7 @@ export const defaultItems = [
   {
     id: 5,
     name: "Educación",
-    row: 6,
+    row: 5,
     col: 1,
     prevRow: 6,
     prevCol: 1,
@@ -62,7 +52,7 @@ export const defaultItems = [
   {
     id: 6,
     name: "Contacto",
-    row: 7,
+    row: 6,
     col: 1,
     prevRow: 7,
     prevCol: 1,

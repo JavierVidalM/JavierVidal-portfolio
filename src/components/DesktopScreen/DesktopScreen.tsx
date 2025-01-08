@@ -3,10 +3,10 @@ import backgroundImage from "../../assets/6201771.jpg";
 // import chevronRight from "../../assets/chevron_right.svg";
 import { defaultItems } from "../../utils/desktopItems";
 import "./DesktopScreen.css";
-import UserWindow from "../UserWindow/UserWindow";
 import { ItemType } from "../../types/windowTypes";
+import Apps from "../AppsComponents/appIndex";
 
-function DesktopScreen() {
+function DesktopScreen({onLock}: {onLock: () => void}) {
   const [isVisible, setIsVisible] = useState(false);
   const [time, setTime] = useState<string>("00:00");
   const [date, setDate] = useState<string>("01/01/2025");
@@ -15,17 +15,29 @@ function DesktopScreen() {
   // const [isContextMenuVisible, setIsContextMenuVisible] = useState(false);
   // const [viewSubMenuVisible, setViewSubMenuVisible] = useState(false);
   // const [sortSubMenuVisible, setSortSubMenuVisible] = useState(false);
+  const [isStartMenuVisible, setIsStartMenuVisible] = useState(false);
+  const [isMenuExiting, setIsMenuExiting] = useState(false);
   const [items, setItems] = useState(defaultItems);
   // const [gridSize, setGridSize] = useState({ cols: 18, rows: 8 });
   const [windowShow, setWindowShow] = useState(false);
   const [oppenedWindows, setOppenedWindows] = useState<ItemType[]>([]);
   const [minimizedWindows, setMinimizedWindows] = useState<ItemType[]>([]);
+  const [isPowerMenuVisible, setIsPowerMenuVisible] = useState(false);
 
   const TASKBAR_HEIGHT = window.innerHeight * 0.055;
   const gridSize = { cols: 18, rows: 8 };
   const GRID_SIZE = {
     width: window.innerWidth / gridSize.cols,
     height: (window.innerHeight - TASKBAR_HEIGHT) / gridSize.rows,
+  };
+
+  const windowComponents = {
+    1: Apps.AboutMeWindow,
+    2: Apps.ExperienceWindow,
+    3: Apps.SkillsWindow,
+    4: Apps.ProjectsWindow,
+    5: Apps.EducationWindow,
+    6: Apps.ContactWindow,
   };
 
   useEffect(() => {
@@ -186,6 +198,34 @@ function DesktopScreen() {
     oppenedWindows.filter((i) => i.id !== item.id);
   };
 
+  const handleStartMenuToggle = () => {
+    if (isStartMenuVisible) {
+      setIsMenuExiting(true);
+    } else {
+      setIsPowerMenuVisible(false);
+      setIsStartMenuVisible(true);
+      setIsMenuExiting(false);
+    }
+  };
+
+  // Add animation end handler
+  const handleAnimationEnd = () => {
+    if (isMenuExiting) {
+      setIsStartMenuVisible(false);
+      setIsMenuExiting(false);
+    }
+  };
+
+  const handlePowerMenuToggle = () => {
+    if (isStartMenuVisible) {
+      setIsMenuExiting(true);
+    } else {
+      setIsPowerMenuVisible(false);
+      setIsStartMenuVisible(true);
+      setIsMenuExiting(false);
+    }
+  }
+
   return (
     <div
       className={`flex absolute overflow-hidden w-screen h-screen${
@@ -193,11 +233,17 @@ function DesktopScreen() {
       } align-middle  justify-center select-none ${
         isVisible ? "opacity-100" : "opacity-100"
       }`}
+      onContextMenu={(event) => event.preventDefault()}
       // style={{
       //   width: windowWidth,
       //   height: windowHeight,
       // }}
       // onClick={handleClickOutsideContextMenu}
+      onClick={() => {
+        if(isStartMenuVisible) {
+          handleStartMenuToggle();
+        }
+      }}
     >
       <img
         src={backgroundImage}
@@ -232,29 +278,40 @@ function DesktopScreen() {
               margin: 10,
             }}
           >
-            <div className="w-full  items-center justify-center text-center text-6xl self-center">
+            <div className="w-full items-center justify-center text-center text-5xl self-center ">
               {item.icon}
-              <p className="flex w-full text-base text-center items-center justify-center text-white align-text-bottom pt-4">
+              <p className="flex w-full text-base text-center items-center justify-center text-white align-text-bottom text-ellipsis pt-4">
                 {item.name}
               </p>
             </div>
           </div>
         ))}
       </div>
-      {oppenedWindows.map((item) => (
-        <UserWindow
-          item={item}
-          onClose={() => onClose(item)}
-          onMinimize={() => handleMinimize(item)}
-        />
-      ))}
+      <div>
+        {oppenedWindows.map((item) => {
+          const WindowComponent =
+            windowComponents[item.id as keyof typeof windowComponents];
+          if (!WindowComponent) return null;
+          return (
+            <WindowComponent
+              item={item}
+              key={item.id}
+              onClose={() => onClose(item)}
+              onMinimize={() => handleMinimize(item)}
+            />
+          );
+        })}
+      </div>
 
       {/* Taskbar */}
       <div className="absolute w-full h-[5.5%] bottom-0 bg-black/30 backdrop-blur-lg items-center">
         {/* Taskbar home button */}
         <div className="flex absolute w-full h-full items-center justify-start px-[1%] space-x-2">
           <div className="flex items-center justify-center px-[6px] h-[82%] rounded-md hover:shadow-inner">
-            <button className="bg-gradient-to-tl from-[#0277d3] to-[#4bd0fe] aspect-square h-[75%] text-slate-200 font-bold rounded-md text-center items-center justify-center ">
+            <button
+              className="bg-gradient-to-tl from-[#0277d3] to-[#4bd0fe] aspect-square h-[75%] text-slate-200 font-bold rounded-md text-center items-center justify-center"
+              onClick={handleStartMenuToggle}
+            >
               JV
             </button>
           </div>
@@ -292,6 +349,96 @@ function DesktopScreen() {
           </div>
         </div>
       </div>
+
+      {/* Start Menu */}
+      {isStartMenuVisible && (
+        <div
+          className={`start-menu ${isMenuExiting ? "start-menu-exit" : ""}`}
+          onAnimationEnd={handleAnimationEnd}
+          onClick={(event) => event.stopPropagation()}
+        >
+          <div className="h-[88%] p-8">
+            <ul className="overflow-y-auto h-full scrollbar-hidden">
+              {items
+                .sort(function (a, b) {
+                  if (a.name.toLocaleLowerCase() < b.name.toLocaleLowerCase())
+                    return -1;
+                  if (a.name.toLocaleLowerCase() > b.name.toLocaleLowerCase())
+                    return 1;
+                  return 0;
+                })
+                .map((item) => (
+                  <div
+                    className="hover:bg-slate-200/10 rounded-md px-4"
+                    onClick={() => {
+                      handleStartMenuToggle();
+                      setTimeout(() => handleDoubleClick(item), 300);
+                    }}
+                  >
+                    <li className="py-5 text-white font-thin" key={item.id}>
+                      <span className="mr-2">{item.icon}</span>
+                      {item.name}
+                    </li>
+                  </div>
+                ))}
+            </ul>
+          </div>
+          <div className="flex items-center justify-between h-[12%] text-2xl font-thin text-white bg-neutral-950/10 rounded-b-xl px-10 border-t-neutral-800/40 border-t-1">
+            <div className="flex items-center space-x-2">
+              <img
+                src="https://unavatar.io/github/JavierVidalM"
+                alt="Javier Profile Picture"
+                className="aspect-square w-[12%] rounded-full bg-slate-600"
+              />
+              <p>Javier Vidal</p>
+            </div>
+            <div className="flex items-center justify-center space-x-2">
+              <div className="hover:shadow-inner p-1 items-center justify-center align-middle rounded">
+                <button className="aspect-square w-7 rounded-full border-white border-1">
+                  {/* accessibility icon */}
+                  <img
+                    src="https://img.icons8.com/?size=100&id=r4i79pBKwnBN&format=png&color=ffffff"
+                    alt="accesibility icon"
+                    className="p-1"
+                  />
+                </button>
+              </div>
+              <div className="hover:shadow-inner p-1 items-center justify-center align-middle rounded">
+                <button className=" w-7 rounded-full"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setIsPowerMenuVisible(!isPowerMenuVisible);
+                }}
+                >
+                  {/* accessibility icon */}
+                  <img
+                    src="https://img.icons8.com/?size=100&id=59995&format=png&color=ffffff"
+                    alt="power icon"
+                  />
+                </button>
+              </div>
+              {isPowerMenuVisible && (
+                <div className="absolute bg-neutral-600 backdrop-blur w-2/12 rounded-md p-2 justify-center items-center">
+                  <p
+                    className="flex font-normal w-full h-11/12 px-2 py-1 rounded hover:bg-slate-200"
+                    onClick={onLock}
+                  >
+                    Bloquear
+                  </p>
+                  <p
+                    className="flex font-normal w-full h-11/12 px-2 py-1 rounded hover:bg-slate-200"
+                    onClick={() => {
+                      handlePowerMenuToggle();
+                    }}
+                  >
+                    Apagar
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* {isContextMenuVisible && (
         <div

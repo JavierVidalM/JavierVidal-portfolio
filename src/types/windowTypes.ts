@@ -12,6 +12,8 @@ export interface ItemType {
 export interface WindowTypes {
   onClose: () => void;
   onMinimize: () => void;
+  // prevSize: { width: number; height: number };
+  // prevPosition: { x: number; y: number };
   children?: React.ReactNode;
   item: ItemType;
 }

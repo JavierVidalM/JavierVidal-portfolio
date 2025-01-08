@@ -57,7 +57,6 @@ function WindowComponent({ onClose, children, item, onMinimize }: WindowTypes) {
         x: event.clientX - position.x,
         y: event.clientY - position.y,
       });
-
     } else {
       setIsMaximized(false);
       setWindowSize(windowPrevSize);
@@ -98,17 +97,19 @@ function WindowComponent({ onClose, children, item, onMinimize }: WindowTypes) {
   };
 
   const toggleWindowMaximized = () => {
-    if (isMaximized) {
-      setIsMaximized(false);
-      setPosition(prevPosition);
-      setWindowSize(windowPrevSize);
-    } else {
+    if (!isMaximized) {
+      setWindowPrevSize(windowSize);
+      setPrevPosition(position);
       setIsMaximized(true);
       setWindowSize({
         width: maxSize.width,
         height: maxSize.height - TASKBAR_SIZE,
       });
       setPosition({ x: 0, y: 0 });
+    } else {
+      setIsMaximized(false);
+      setPosition(prevPosition);
+      setWindowSize(windowPrevSize);
     }
   };
 
@@ -215,6 +216,8 @@ function WindowComponent({ onClose, children, item, onMinimize }: WindowTypes) {
   };
 
   const handleReziseWindow = (event: React.MouseEvent) => {
+    if (isResizing || isMaximized) return;
+
     const edges = {
       left: position.x,
       right: position.x + windowSize.width,
@@ -286,11 +289,6 @@ function WindowComponent({ onClose, children, item, onMinimize }: WindowTypes) {
     }
   };
 
-  const handleMinimize = () => {
-    setIsMinimized(!isMinimized);
-    onMinimize();
-  };
-
   return (
     <div
       className={`absolute bg-slate-50 shadow-xl ${
@@ -327,15 +325,18 @@ function WindowComponent({ onClose, children, item, onMinimize }: WindowTypes) {
           </div>
 
           {/* Window controls */}
-          <div className="flex absolute h-full space-x-1 right-0 pb-1">
-            <button className="aspect-square w-auto hover:bg-black/30 transition-all duration-100"
-              onClick={handleMinimize}
+          <div className="flex absolute h-full space-x-1 right-0 pb-1 bg-green-400">
+            <button
+              className="aspect-square w-auto hover:bg-black/30 transition-all duration-100"
+              onClick={onMinimize}
+              onMouseDown={(event) => event.stopPropagation()}
             >
               --
             </button>
             <button
               className="aspect-square w-auto hover:bg-black/30 transition-all duration-100"
               onClick={toggleWindowMaximized}
+              onMouseDown={(event) => event.stopPropagation()}
             >
               {"[ ]"}
             </button>
@@ -344,13 +345,16 @@ function WindowComponent({ onClose, children, item, onMinimize }: WindowTypes) {
                 isMaximized ? "rounded-r-none" : "rounded-tr-lg"
               }`}
               onClick={onClose}
+              onMouseDown={(event) => event.stopPropagation()}
             >
               X
             </button>
           </div>
         </div>
       </div>
-      {children}
+      <div className="absolute inset-0 mt-8 mr-0.5 overflow-auto">
+        {children}
+      </div>
     </div>
   );
 }
