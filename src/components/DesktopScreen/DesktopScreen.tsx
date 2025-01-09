@@ -19,7 +19,6 @@ function DesktopScreen({onLock}: {onLock: () => void}) {
   const [isMenuExiting, setIsMenuExiting] = useState(false);
   const [items, setItems] = useState(defaultItems);
   // const [gridSize, setGridSize] = useState({ cols: 18, rows: 8 });
-  const [windowShow, setWindowShow] = useState(false);
   const [oppenedWindows, setOppenedWindows] = useState<ItemType[]>([]);
   const [minimizedWindows, setMinimizedWindows] = useState<ItemType[]>([]);
   const [isPowerMenuVisible, setIsPowerMenuVisible] = useState(false);
@@ -180,7 +179,6 @@ function DesktopScreen({onLock}: {onLock: () => void}) {
   };
 
   const handleDoubleClick = (item: ItemType) => {
-    setWindowShow(true);
     setOppenedWindows([...oppenedWindows, item]);
   };
 

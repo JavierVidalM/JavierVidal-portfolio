@@ -11,7 +11,6 @@ function WindowComponent({ onClose, children, item, onMinimize }: WindowTypes) {
   const [prevPosition, setPrevPosition] = useState({ x: 32, y: 20 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [isMinimized, setIsMinimized] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
   const [pointer, setPointer] = useState<PointerTypes>("pointer");
   const [isResizing, setIsResizing] = useState(false);
