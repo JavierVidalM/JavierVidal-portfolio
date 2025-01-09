@@ -21,8 +21,6 @@ function LockScreen({ onUnlock }: { onUnlock: () => void }) {
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      console.log(now);
-
       setTime(
         now.getHours().toString().padStart(2, "0") +
           ":" +
