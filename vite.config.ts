@@ -4,4 +4,5 @@ import envCompatible from 'vite-plugin-env-compatible';
 
 export default defineConfig({
   plugins: [react(), envCompatible()],
+  base: '/lock-screen/',
 });
