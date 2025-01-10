@@ -324,7 +324,7 @@ function WindowComponent({ onClose, children, item, onMinimize }: WindowTypes) {
           </div>
 
           {/* Window controls */}
-          <div className="flex absolute h-full space-x-1 right-0 pb-1 bg-green-400">
+          <div className="flex absolute h-full space-x-1 right-0 pb-1">
             <button
               className="aspect-square w-auto hover:bg-black/30 transition-all duration-100"
               onClick={onMinimize}

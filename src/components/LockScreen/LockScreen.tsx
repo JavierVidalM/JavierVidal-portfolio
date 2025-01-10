@@ -2,13 +2,17 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import backgroundImage from "../../assets/9580633.jpg";
-import { getWeatherConditionIcon } from "../../utils/getWheaterConditions";
+import {
+  getWeatherConditionDetail,
+  getWeatherConditionIcon,
+} from "../../utils/getWheaterConditions";
 import "./LockScreen.css";
 
 function LockScreen({ onUnlock }: { onUnlock: () => void }) {
   const [time, setTime] = useState<string>("00:00");
   const [isFocused, setIsFocused] = useState(true);
   const [weather, setWeather] = useState<any>(null);
+  const [weatherCondition, setWeatherCondition] = useState<string>("");
   const [weatherIcon, setWeatherIcon] = useState<string>("");
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [startY, setStartY] = useState(0);
@@ -44,16 +48,15 @@ function LockScreen({ onUnlock }: { onUnlock: () => void }) {
           throw new Error("WEATHER_API_URL is not defined");
         }
         const response = await axios.get(apiUrl);
-        getWeatherConditionIcon(
-          response.data.current_condition[0].weatherDesc[0].value
+        const weather = await getWeatherConditionDetail(
+          response.data.current_condition[0].weatherDesc[0].value.split(",")[0]
         );
+        setWeatherCondition(weather);
         setWeather(response.data);
-        // console.log(response.data);
-        setWeatherIcon(
-          getWeatherConditionIcon(
-            response.data.current_condition[0].weatherDesc[0].value
-          )
+        const icon = await getWeatherConditionIcon(
+          response.data.current_condition[0].weatherDesc[0].value.split(",")[0]
         );
+        setWeatherIcon(icon);
       } catch (error) {
         console.error("Error fetching weather data: ", error);
       } finally {
@@ -160,7 +163,7 @@ function LockScreen({ onUnlock }: { onUnlock: () => void }) {
                   <img
                     src={weatherIcon}
                     alt="weather icon"
-                    className="h-20 mt-4 group-hover:rotate-[35deg] transition-transform"
+                    className="h-20 mt-4 weather-icon transition-transform"
                   />
                   <p className="py-2 pl-2 text-white text-5xl font-medium">
                     {weather.current_condition[0].temp_C}
@@ -171,7 +174,7 @@ function LockScreen({ onUnlock }: { onUnlock: () => void }) {
                 </div>
                 <div className="ml-20 mx-2 text-white text-lg font-normal text-center justify-center items-center">
                   <div className="">
-                    {weather.current_condition[0].weatherDesc[0].value}
+                    {weatherCondition.capitalize()}{" "}
                   </div>
                   <div className="">
                     {weather.weather[0].maxtempC}° /{" "}

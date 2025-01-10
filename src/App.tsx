@@ -6,6 +6,7 @@ function App() {
   const [isLocked, setIsLocked] = useState(true);
 
   return <>{isLocked ? <LockScreen onUnlock={() => setIsLocked(false)} /> : <DesktopScreen onLock={() => setIsLocked(true)} />}</>;
+
 }
 
 export default App;

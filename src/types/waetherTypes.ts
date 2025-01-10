@@ -4,3 +4,9 @@ export interface weatherType {
     feelingT:"string";
     location: string;
 }
+
+export interface WeatherConditions {
+    condition: string;
+    detail: string;
+    icon: string;
+  }
