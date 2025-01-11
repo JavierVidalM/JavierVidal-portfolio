@@ -16,7 +16,7 @@ export const defaultItems = [
     col: 1,
     prevRow: 3,
     prevCol: 1,
-    icon: "💼",
+    icon: "https://img.icons8.com/?size=100&id=GzCW12vGkSHM&format=png&color=000000",
     selected: false,
   },
   {
@@ -36,7 +36,7 @@ export const defaultItems = [
     col: 1,
     prevRow: 5,
     prevCol: 1,
-    icon: "📂",
+    icon: "https://img.icons8.com/?size=100&id=9OGIyU8hrxW5&format=png&color=000000",
     selected: false,
   },
   {
@@ -46,7 +46,7 @@ export const defaultItems = [
     col: 1,
     prevRow: 6,
     prevCol: 1,
-    icon: "🎓",
+    icon: "https://img.icons8.com/?size=100&id=7LhMaNDFgoYK&format=png&color=000000",
     selected: false,
   },
   {

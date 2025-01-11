@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { PointerTypes, WindowTypes } from "../../types/windowTypes";
 
-function WindowComponent({ onClose, children, item, onMinimize }: WindowTypes) {
-  const [windowSize, setWindowSize] = useState({ width: 600, height: 400 });
+function WindowComponent({ onClose, onMinimize, children, item, className }: WindowTypes) {
+  const [windowSize, setWindowSize] = useState({ width:300, height: 400 });
   const [windowPrevSize, setWindowPrevSize] = useState({
     width: 600,
     height: 400,
@@ -121,6 +121,7 @@ function WindowComponent({ onClose, children, item, onMinimize }: WindowTypes) {
   };
 
   const handleResize = (event: MouseEvent) => {
+    console.log(item.name);
     if (!isResizing) return;
 
     const deltaX = event.clientX - resizeStart.x;
@@ -130,11 +131,11 @@ function WindowComponent({ onClose, children, item, onMinimize }: WindowTypes) {
       case "cursor-e-resize":
         setWindowSize({
           ...windowSize,
-          width: Math.max(100, windowPrevSize.width + deltaX),
+          width: Math.max(300, windowPrevSize.width + deltaX),
         });
         break;
       case "cursor-w-resize": {
-        const newWidth = Math.max(200, windowPrevSize.width - deltaX);
+        const newWidth = Math.max(300, windowPrevSize.width - deltaX);
         setWindowSize({ ...windowSize, width: newWidth });
         setPosition({
           ...position,
@@ -145,7 +146,7 @@ function WindowComponent({ onClose, children, item, onMinimize }: WindowTypes) {
       case "cursor-s-resize":
         setWindowSize({
           ...windowSize,
-          height: Math.max(200, windowPrevSize.height + deltaY),
+          height: Math.max(300, windowPrevSize.height + deltaY),
         });
         break;
       case "cursor-n-resize": {
@@ -160,7 +161,7 @@ function WindowComponent({ onClose, children, item, onMinimize }: WindowTypes) {
           setPointer("pointer");
           return;
         }
-        const newHeight = Math.max(200, windowPrevSize.height - deltaY);
+        const newHeight = Math.max(300, windowPrevSize.height - deltaY);
         setWindowSize({ ...windowSize, height: newHeight });
         setPosition({
           ...position,
@@ -171,13 +172,13 @@ function WindowComponent({ onClose, children, item, onMinimize }: WindowTypes) {
       // Add similar cases for diagonal resizing
       case "cursor-se-resize":
         setWindowSize({
-          width: Math.max(200, windowPrevSize.width + deltaX),
+          width: Math.max(300, windowPrevSize.width + deltaX),
           height: Math.max(240, windowPrevSize.height + deltaY),
         });
         break;
       case "cursor-sw-resize":
         setWindowSize({
-          width: Math.max(200, windowPrevSize.width - deltaX),
+          width: Math.max(300, windowPrevSize.width - deltaX),
           height: Math.max(240, windowPrevSize.height + deltaY),
         });
         setPosition({
@@ -187,7 +188,7 @@ function WindowComponent({ onClose, children, item, onMinimize }: WindowTypes) {
         break;
       case "cursor-ne-resize":
         setWindowSize({
-          width: Math.max(200, windowPrevSize.width + deltaX),
+          width: Math.max(300, windowPrevSize.width + deltaX),
           height: Math.max(240, windowPrevSize.height - deltaY),
         });
         setPosition({
@@ -197,7 +198,7 @@ function WindowComponent({ onClose, children, item, onMinimize }: WindowTypes) {
         break;
       case "cursor-nw-resize":
         setWindowSize({
-          width: Math.max(200, windowPrevSize.width - deltaX),
+          width: Math.max(300, windowPrevSize.width - deltaX),
           height: Math.max(240, windowPrevSize.height - deltaY),
         });
         setPosition({
@@ -224,7 +225,7 @@ function WindowComponent({ onClose, children, item, onMinimize }: WindowTypes) {
       bottom: position.y + windowSize.height,
     };
 
-    const isNear = (value: number, target: number, range: number = 5) =>
+    const isNear = (value: number, target: number, range: number = 10) =>
       value > target - range && value < target + range;
 
     // Corners
@@ -290,7 +291,9 @@ function WindowComponent({ onClose, children, item, onMinimize }: WindowTypes) {
 
   return (
     <div
-      className={`absolute bg-slate-50 shadow-xl ${
+      className={`absolute shadow-xl
+        ${className}
+        ${
         isMaximized
           ? "rounded-none transition-all duration-150"
           : "rounded-lg border-1 border-gray-400"
@@ -319,8 +322,11 @@ function WindowComponent({ onClose, children, item, onMinimize }: WindowTypes) {
         >
           {/* Window title */}
           <div className="flex absolute left-0 align-middle space-x-2 pl-2">
-            <p>{item ? item.icon : "🪟"}</p>
-            <p>{item ? item.name : "Window title"}</p>
+            {/* <p>{item ? item.icon : "🪟"}</p>
+            <p>{item ? item.name : "Window title"}</p> */}
+
+            <img src={item.icon} alt={item.name} className="w-6 h-6" />
+            <p onClick={console.log}>{item ? item.name : "Window title"}</p>
           </div>
 
           {/* Window controls */}
@@ -351,7 +357,7 @@ function WindowComponent({ onClose, children, item, onMinimize }: WindowTypes) {
           </div>
         </div>
       </div>
-      <div className="absolute inset-0 mt-8 mr-0.5 overflow-auto">
+      <div className={`absolute inset-0 mt-8 mr-0.5 overflow-auto ${className}`}>
         {children}
       </div>
     </div>

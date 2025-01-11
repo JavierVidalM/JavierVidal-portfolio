@@ -16,6 +16,7 @@ export interface WindowTypes {
   // prevPosition: { x: number; y: number };
   children?: React.ReactNode;
   item: ItemType;
+  className?: string;
 }
 
 export type PointerTypes =

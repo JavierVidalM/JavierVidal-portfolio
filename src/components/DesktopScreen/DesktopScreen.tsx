@@ -6,7 +6,7 @@ import "./DesktopScreen.css";
 import { ItemType } from "../../types/windowTypes";
 import Apps from "../AppsComponents/appIndex";
 
-function DesktopScreen({onLock}: {onLock: () => void}) {
+function DesktopScreen({ onLock }: { onLock: () => void }) {
   const [isVisible, setIsVisible] = useState(false);
   const [time, setTime] = useState<string>("00:00");
   const [date, setDate] = useState<string>("01/01/2025");
@@ -222,7 +222,7 @@ function DesktopScreen({onLock}: {onLock: () => void}) {
       setIsStartMenuVisible(true);
       setIsMenuExiting(false);
     }
-  }
+  };
 
   return (
     <div
@@ -238,7 +238,7 @@ function DesktopScreen({onLock}: {onLock: () => void}) {
       // }}
       // onClick={handleClickOutsideContextMenu}
       onClick={() => {
-        if(isStartMenuVisible) {
+        if (isStartMenuVisible) {
           handleStartMenuToggle();
         }
       }}
@@ -276,9 +276,18 @@ function DesktopScreen({onLock}: {onLock: () => void}) {
               margin: 10,
             }}
           >
-            <div className="w-full items-center justify-center text-center text-5xl self-center ">
-              {item.icon}
-              <p className="flex w-full text-base text-center items-center justify-center text-white align-text-bottom text-ellipsis pt-4">
+            <div className="w-full items-center justify-center text-center self-center p-4">
+              {/* EDITAR AL CAMBIAR LOS ICONOS */}
+
+              <img
+                src={item.icon}
+                alt={item.name}
+                className="aspect-square rounded-md"
+              />
+
+              {/* ================================= */}
+
+              <p className="flex w-full text-base text-center items-center justify-center text-white align-text-bottom text-ellipsis">
                 {item.name}
               </p>
             </div>
@@ -314,16 +323,20 @@ function DesktopScreen({onLock}: {onLock: () => void}) {
             </button>
           </div>
 
-          {/* Taskbar oppened windows */}
+          {/*
+          
+          Taskbar oppened windows
+          
+          */}
           <div className="flex h-full items-center justify-center mx-2">
             {oppenedWindows.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center justify-center shadow-inner px-[6px] h-[82%] rounded-md backdrop-blur-0 bg-slate-200/5 hover:bg-slate-200/10 transition-all duration-100"
+                className="flex items-center justify-center shadow-inner px-[6px] h-[80%] rounded-md backdrop-blur-0 bg-slate-200/5 hover:bg-slate-200/10 transition-all duration-100"
                 onClick={() => handleMinimize(item)}
               >
-                <button className="aspect-square h-[75%] text-slate-200 font-bold rounded-md text-center items-center justify-center text-2xl">
-                  {item.icon}
+                <button className="aspect-square h-[75%] rounded-md items-center justify-center ">
+                  <img src={item.icon} alt={item.name} />
                 </button>
               </div>
             ))}
@@ -333,20 +346,38 @@ function DesktopScreen({onLock}: {onLock: () => void}) {
                 className="flex items-center justify-center hover:shadow-inner px-[6px] h-[82%] rounded-md transition-all duration-100"
                 onClick={() => handleRestore(item)}
               >
-                <button className="aspect-square h-[75%] text-slate-200 font-bold rounded-md text-center items-center justify-center text-2xl">
-                  {item.icon}
+                <button className="aspect-square h-[75%] text-slate-200 font-bold rounded-md text-center items-center justify-center">
+                <img
+                src={item.icon}
+                alt={item.name}
+                className="aspect-square rounded-md"
+              />
                 </button>
               </div>
             ))}
           </div>
 
-          {/* taskbar date/hour */}
+          {/* 
+          ========================================
+          */}
+
+          {/* 
+
+          taskbar date/hour
+
+          */}
+
           <div className="absolute right-0 px-[1%] items-center justify-center text-white font-light text-sm text-center">
             <p>{time}</p>
             <p>{date}</p>
           </div>
         </div>
       </div>
+      {/* 
+
+      ========================================
+
+      */}
 
       {/* Start Menu */}
       {isStartMenuVisible && (
@@ -392,26 +423,28 @@ function DesktopScreen({onLock}: {onLock: () => void}) {
             </div>
             <div className="flex items-center justify-center space-x-2">
               <div className="hover:shadow-inner p-1 items-center justify-center align-middle rounded">
-                <button className="aspect-square w-7 rounded-full border-white border-1">
-                  {/* accessibility icon */}
+                <button className="w-7 rounded-full">
+                  {/* settings icon */}
                   <img
-                    src="https://img.icons8.com/?size=100&id=r4i79pBKwnBN&format=png&color=ffffff"
+                    src="https://img.icons8.com/?size=100&id=82535&format=png&color=ffffff"
                     alt="accesibility icon"
-                    className="p-1"
+                    className="p-0.5"
                   />
                 </button>
               </div>
               <div className="hover:shadow-inner p-1 items-center justify-center align-middle rounded">
-                <button className=" w-7 rounded-full"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setIsPowerMenuVisible(!isPowerMenuVisible);
-                }}
+                <button
+                  className=" w-7 rounded-full"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setIsPowerMenuVisible(!isPowerMenuVisible);
+                  }}
                 >
-                  {/* accessibility icon */}
+                  {/* power icon */}
                   <img
-                    src="https://img.icons8.com/?size=100&id=59995&format=png&color=ffffff"
+                    src="https://img.icons8.com/?size=100&id=85077&format=png&color=ffffff"
                     alt="power icon"
+                    className="p-0.5"
                   />
                 </button>
               </div>
