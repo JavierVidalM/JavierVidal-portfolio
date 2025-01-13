@@ -5,7 +5,7 @@ import DesktopScreen from "./components/DesktopScreen/DesktopScreen";
 function App() {
   const [isLocked, setIsLocked] = useState(true);
 
-  return <>{isLocked ? <LockScreen onUnlock={() => setIsLocked(false)} /> : <DesktopScreen onLock={() => setIsLocked(true)} />}</>;
+  return <>{!isLocked ? <LockScreen onUnlock={() => setIsLocked(false)} /> : <DesktopScreen onLock={() => setIsLocked(true)} />}</>;
 
 }
 

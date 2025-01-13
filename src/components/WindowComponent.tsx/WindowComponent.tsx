@@ -1,8 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { PointerTypes, WindowTypes } from "../../types/windowTypes";
+import { lightIcons, darkIcons } from "../../assets/windowIcons";
 
-function WindowComponent({ onClose, onMinimize, children, item, className }: WindowTypes) {
-  const [windowSize, setWindowSize] = useState({ width:300, height: 400 });
+function WindowComponent({
+  onClose,
+  onMinimize,
+  children,
+  item,
+  className,
+}: WindowTypes) {
+  const [windowSize, setWindowSize] = useState({ width: 300, height: 400 });
   const [windowPrevSize, setWindowPrevSize] = useState({
     width: 600,
     height: 400,
@@ -15,6 +22,7 @@ function WindowComponent({ onClose, onMinimize, children, item, className }: Win
   const [pointer, setPointer] = useState<PointerTypes>("pointer");
   const [isResizing, setIsResizing] = useState(false);
   const [resizeStart, setResizeStart] = useState({ x: 0, y: 0 });
+  const isDarkTheme = useRef(false);
 
   const maxSize = { width: window.innerWidth, height: window.innerHeight };
   const TASKBAR_SIZE = window.innerHeight * 0.055;
@@ -289,15 +297,16 @@ function WindowComponent({ onClose, onMinimize, children, item, className }: Win
     }
   };
 
+
   return (
     <div
       className={`absolute shadow-xl
         ${className}
         ${
-        isMaximized
-          ? "rounded-none transition-all duration-150"
-          : "rounded-lg border-1 border-gray-400"
-      } 
+          isMaximized
+            ? "rounded-none transition-all duration-150"
+            : "rounded-lg border-1 border-gray-400"
+        } 
       ${pointer}`}
       style={{
         width: windowSize.width,
@@ -322,42 +331,70 @@ function WindowComponent({ onClose, onMinimize, children, item, className }: Win
         >
           {/* Window title */}
           <div className="flex absolute left-0 align-middle space-x-2 pl-2">
-            {/* <p>{item ? item.icon : "🪟"}</p>
-            <p>{item ? item.name : "Window title"}</p> */}
-
+            {/* Window Icon */}
             <img src={item.icon} alt={item.name} className="w-6 h-6" />
+            {/* Window App Name */}
             <p onClick={console.log}>{item ? item.name : "Window title"}</p>
           </div>
 
           {/* Window controls */}
           <div className="flex absolute h-full space-x-1 right-0 pb-1">
+            {/* 
+              // Minimize button
+            */}
             <button
-              className="aspect-square w-auto hover:bg-black/30 transition-all duration-100"
+              className="aspect-square p-1.5 hover:bg-black/30 transition-all duration-100"
               onClick={onMinimize}
               onMouseDown={(event) => event.stopPropagation()}
             >
-              --
+              <img
+                src={
+                  isDarkTheme
+                    ? darkIcons.minimizeIconDark
+                    : lightIcons.minimizeIconLight
+                }
+                alt="minimize"
+              />
             </button>
+
+            {/* 
+              // Maximize button
+            */}
             <button
-              className="aspect-square w-auto hover:bg-black/30 transition-all duration-100"
+              className="aspect-square p-1.5 items-center justify-center  hover:bg-black/30 transition-all duration-100"
               onClick={toggleWindowMaximized}
               onMouseDown={(event) => event.stopPropagation()}
             >
-              {"[ ]"}
+              <img
+                src={
+                  
+                  isMaximized
+                    ? (isDarkTheme ? darkIcons.restoreIconDark : lightIcons.restoreIconLight)
+                    : (isDarkTheme ? darkIcons.maximizeIconDark : lightIcons.maximizeIconLight)
+                }
+                alt={isMaximized ? "restore" : "maximize"}
+                className="items-center justify-center"
+              />
             </button>
+
+            {/* 
+              // Close button
+            */}
             <button
-              className={`aspect-square w-auto hover:bg-red-500 hover:text-white transition-all duration-100 ${
+              className={`aspect-square p-1.5 items-center justify-center hover:bg-red-400 hover:bg-black/30  transition-all duration-100 ${
                 isMaximized ? "rounded-r-none" : "rounded-tr-lg"
               }`}
               onClick={onClose}
               onMouseDown={(event) => event.stopPropagation()}
             >
-              X
+              <img src={(isDarkTheme || closeHover) ? darkIcons.closeIconDark : lightIcons.closeIconLight} alt="close" />
             </button>
           </div>
         </div>
       </div>
-      <div className={`absolute inset-0 mt-8 mr-0.5 overflow-auto ${className}`}>
+      <div
+        className={`absolute inset-0 mt-8 mr-0.5 overflow-auto ${className}`}
+      >
         {children}
       </div>
     </div>
