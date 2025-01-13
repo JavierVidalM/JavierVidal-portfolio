@@ -387,13 +387,13 @@ function WindowComponent({
               onClick={onClose}
               onMouseDown={(event) => event.stopPropagation()}
             >
-              <img src={(isDarkTheme || closeHover) ? darkIcons.closeIconDark : lightIcons.closeIconLight} alt="close" />
+              <img src={isDarkTheme ? darkIcons.closeIconDark : lightIcons.closeIconLight} alt="close" />
             </button>
           </div>
         </div>
       </div>
       <div
-        className={`absolute inset-0 mt-8 mr-0.5 overflow-auto ${className}`}
+        className={`absolute inset-0 mt-8 overflow-auto ${className} ${isMaximized ? "rounded-none" : "rounded-b-lg"}`}
       >
         {children}
       </div>

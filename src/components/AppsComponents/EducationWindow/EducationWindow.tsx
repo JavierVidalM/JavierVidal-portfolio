@@ -103,7 +103,7 @@ function EducationWindow({ item, onClose, onMinimize }: WindowTypes) {
       item={item}
       onClose={onClose}
       onMinimize={onMinimize}
-      className={` rounded-lg ${
+      className={`${
         colorTheme === "dark" ? "bg-black" : "bg-white"
       }`}
     >

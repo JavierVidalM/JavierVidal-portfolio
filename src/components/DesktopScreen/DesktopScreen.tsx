@@ -224,6 +224,13 @@ function DesktopScreen({ onLock }: { onLock: () => void }) {
     }
   };
 
+  const unselectItem = () => {
+    items.map((item) => {
+      if (item.selected) {
+        handleSelectItem(item.id);
+    }})
+  }
+
   return (
     <div
       className={`flex absolute overflow-hidden w-screen h-screen${
@@ -241,6 +248,7 @@ function DesktopScreen({ onLock }: { onLock: () => void }) {
         if (isStartMenuVisible) {
           handleStartMenuToggle();
         }
+        unselectItem();
       }}
     >
       <img
@@ -253,6 +261,7 @@ function DesktopScreen({ onLock }: { onLock: () => void }) {
         className="desktop-container p-10"
         style={{ position: "relative", width: "100%", height: "100%" }}
         // onContextMenu={(event) => handleRightClick(event)}
+
         onDrop={handleDrop}
         onDragOver={handleDragOver}
       >
@@ -265,7 +274,7 @@ function DesktopScreen({ onLock }: { onLock: () => void }) {
             }`}
             onDragStart={(event) => handleDragStart(event, item.id)}
             onClick={() => handleSelectItem(item.id)}
-            onDoubleClick={() => handleDoubleClick(item)}
+            onDoubleClick={() => {handleDoubleClick(item); unselectItem();}}
             draggable
             style={{
               position: "absolute",
