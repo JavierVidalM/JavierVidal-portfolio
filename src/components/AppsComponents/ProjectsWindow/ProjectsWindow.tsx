@@ -2,7 +2,6 @@ import { WindowTypes } from "../../../types/windowTypes";
 import WindowComponent from "../../WindowComponent.tsx/WindowComponent";
 
 function ProjectsWindow({ item, onClose, onMinimize }: WindowTypes) {
-  const []
 
   return (
     <WindowComponent
