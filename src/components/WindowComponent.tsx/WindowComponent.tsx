@@ -22,7 +22,7 @@ function WindowComponent({
   const [pointer, setPointer] = useState<PointerTypes>("pointer");
   const [isResizing, setIsResizing] = useState(false);
   const [resizeStart, setResizeStart] = useState({ x: 0, y: 0 });
-  const isDarkTheme = useRef(false);
+  const isDarkTheme = useRef<boolean>(window.localStorage.getItem("isDarkTheme") === "true");
 
   const maxSize = { width: window.innerWidth, height: window.innerHeight };
   const TASKBAR_SIZE = window.innerHeight * 0.055;

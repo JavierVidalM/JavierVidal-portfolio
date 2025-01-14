@@ -22,6 +22,7 @@ function DesktopScreen({ onLock }: { onLock: () => void }) {
   const [oppenedWindows, setOppenedWindows] = useState<ItemType[]>([]);
   const [minimizedWindows, setMinimizedWindows] = useState<ItemType[]>([]);
   const [isPowerMenuVisible, setIsPowerMenuVisible] = useState(false);
+  const [isDarkTheme, setIsDarkTheme] = useState<boolean>(window.localStorage.getItem("isDarkTheme") === "true");
 
   const TASKBAR_HEIGHT = window.innerHeight * 0.055;
   const gridSize = { cols: 18, rows: 8 };
@@ -37,6 +38,7 @@ function DesktopScreen({ onLock }: { onLock: () => void }) {
     4: Apps.ProjectsWindow,
     5: Apps.EducationWindow,
     6: Apps.ContactWindow,
+    7: Apps.SettingsWindow,
   };
 
   useEffect(() => {
@@ -84,7 +86,7 @@ function DesktopScreen({ onLock }: { onLock: () => void }) {
   const snapToGrid = (
     row: number,
     col: number,
-    items: typeof defaultItems,
+    items: ItemType[],
     id: number
   ) => {
     const maxRow = gridSize.rows;
@@ -131,7 +133,7 @@ function DesktopScreen({ onLock }: { onLock: () => void }) {
 
     setItems((prevItems) =>
       prevItems.map((item) =>
-        item.id === id
+        item.id === id && item.id > 7
           ? {
               ...item,
               ...snappedPos,
@@ -228,7 +230,18 @@ function DesktopScreen({ onLock }: { onLock: () => void }) {
     items.map((item) => {
       if (item.selected) {
         handleSelectItem(item.id);
-    }})
+      }
+    });
+  };
+
+  const handleLock = () => {
+    window.localStorage.setItem("isLocked", "true");
+    onLock();
+  };
+
+  const toggleDarkTheme = () => {
+    window.localStorage.setItem("isDarkTheme", JSON.stringify(!isDarkTheme));
+    setIsDarkTheme(!isDarkTheme);
   }
 
   return (
@@ -274,7 +287,10 @@ function DesktopScreen({ onLock }: { onLock: () => void }) {
             }`}
             onDragStart={(event) => handleDragStart(event, item.id)}
             onClick={() => handleSelectItem(item.id)}
-            onDoubleClick={() => {handleDoubleClick(item); unselectItem();}}
+            onDoubleClick={() => {
+              handleDoubleClick(item);
+              unselectItem();
+            }}
             draggable
             style={{
               position: "absolute",
@@ -320,7 +336,7 @@ function DesktopScreen({ onLock }: { onLock: () => void }) {
       </div>
 
       {/* Taskbar */}
-      <div className="absolute w-full h-[5.5%] bottom-0 bg-black/30 backdrop-blur-lg items-center">
+      <div className={`absolute w-full h-[5.5%] bottom-0 bg-black/30 backdrop-blur-lg items-center`}>
         {/* Taskbar home button */}
         <div className="flex absolute w-full h-full items-center justify-start px-[1%] space-x-2">
           <div className="flex items-center justify-center px-[6px] h-[82%] rounded-md hover:shadow-inner">
@@ -356,11 +372,11 @@ function DesktopScreen({ onLock }: { onLock: () => void }) {
                 onClick={() => handleRestore(item)}
               >
                 <button className="aspect-square h-[75%] text-slate-200 font-bold rounded-md text-center items-center justify-center">
-                <img
-                src={item.icon}
-                alt={item.name}
-                className="aspect-square rounded-md"
-              />
+                  <img
+                    src={item.icon}
+                    alt={item.name}
+                    className="aspect-square rounded-md"
+                  />
                 </button>
               </div>
             ))}
@@ -391,11 +407,16 @@ function DesktopScreen({ onLock }: { onLock: () => void }) {
       {/* Start Menu */}
       {isStartMenuVisible && (
         <div
-          className={`start-menu ${isMenuExiting ? "start-menu-exit" : ""}`}
+          className={`
+            absolute backdrop-blur-xl w-1/4 h-3/5 bottom-[6.5%] left-[1%] rounded-xl border-1
+            border-neutral-400/20 
+            ${isMenuExiting ? "start-menu-exit" : ""}
+            ${isDarkTheme ? "bg-neutral-900/70" : "bg-sky-200/40"}
+            `}
           onAnimationEnd={handleAnimationEnd}
           onClick={(event) => event.stopPropagation()}
         >
-          <div className="h-[88%] p-8">
+          <div className="h-[88%] px-10 py-8">
             <ul className="overflow-y-auto h-full scrollbar-hidden">
               {items
                 .sort(function (a, b) {
@@ -407,21 +428,29 @@ function DesktopScreen({ onLock }: { onLock: () => void }) {
                 })
                 .map((item) => (
                   <div
-                    className="hover:bg-slate-200/10 rounded-md px-4"
+                    key={item.id}
+                    className="hover:bg-slate-200/10 rounded-md px-8"
                     onClick={() => {
                       handleStartMenuToggle();
                       setTimeout(() => handleDoubleClick(item), 300);
                     }}
                   >
-                    <li className="py-5 text-white font-thin" key={item.id}>
-                      <span className="mr-2">{item.icon}</span>
+                    <li
+                      className={`flex py-5 ${isDarkTheme ? "text-white" : "text-black"} font-normal items-center justify-start`}
+                      key={item.id}
+                    >
+                      <img
+                        src={item.icon}
+                        alt={item.name}
+                        className="mr-2 w-8"
+                      />
                       {item.name}
                     </li>
                   </div>
                 ))}
             </ul>
           </div>
-          <div className="flex items-center justify-between h-[12%] text-2xl font-thin text-white bg-neutral-950/10 rounded-b-xl px-10 border-t-neutral-800/40 border-t-1">
+          <div className={`flex items-center justify-between h-[12%] text-2xl font-thin text-white ${isDarkTheme ? "bg-neutral-950/10" : "bg-sky-200/20"} rounded-b-xl px-10 border-t-neutral-800/40 border-t-1`}>
             <div className="flex items-center space-x-2">
               <img
                 src="https://unavatar.io/github/JavierVidalM"
@@ -432,13 +461,24 @@ function DesktopScreen({ onLock }: { onLock: () => void }) {
             </div>
             <div className="flex items-center justify-center space-x-2">
               <div className="hover:shadow-inner p-1 items-center justify-center align-middle rounded">
-                <button className="w-7 rounded-full">
+                <button 
+                className="w-7 rounded-full transition-all transform duration-300" 
+                onClick={toggleDarkTheme}
+                >
                   {/* settings icon */}
-                  <img
-                    src="https://img.icons8.com/?size=100&id=82535&format=png&color=ffffff"
-                    alt="accesibility icon"
-                    className="p-0.5"
-                  />
+                  {isDarkTheme ? (
+                    <img
+                      src="https://img.icons8.com/?size=100&id=2oHwjcalGZHE&format=png&color=ffffff"
+                      alt="dark theme icon"
+                      className="p-0.5"
+                    />
+                  ) : (
+                    <img
+                      src="https://img.icons8.com/?size=100&id=kDPHHp80u2xF&format=png&color=000000"
+                      alt="light theme icon"
+                      className="p-0.5"
+                    />
+                  )}
                 </button>
               </div>
               <div className="hover:shadow-inner p-1 items-center justify-center align-middle rounded">
@@ -458,21 +498,35 @@ function DesktopScreen({ onLock }: { onLock: () => void }) {
                 </button>
               </div>
               {isPowerMenuVisible && (
-                <div className="absolute bg-neutral-600 backdrop-blur w-2/12 rounded-md p-2 justify-center items-center">
-                  <p
-                    className="flex font-normal w-full h-11/12 px-2 py-1 rounded hover:bg-slate-200"
-                    onClick={onLock}
-                  >
-                    Bloquear
-                  </p>
-                  <p
-                    className="flex font-normal w-full h-11/12 px-2 py-1 rounded hover:bg-slate-200"
-                    onClick={() => {
-                      handlePowerMenuToggle();
-                    }}
-                  >
-                    Apagar
-                  </p>
+                <div className=" absolute bottom-[12%] w-auto bg-neutral-900/10 backdrop-blur-xl rounded-md p-1.5 border-px border-neutral-400/30 justify-center items-center shadow-lg shadow-black/20">
+                  <button className="flex w-full items-center justify-center p-1 rounded hover:bg-slate-200">
+                    <img
+                      src="https://img.icons8.com/?size=100&id=XkaSssewbJSt&format=png&color=ffffff"
+                      alt="lock icon"
+                      className="w-5"
+                    />
+                    <span
+                      className="flex font-normal text-base w-full h-11/12 px-2 py-1 rounded "
+                      onClick={handleLock}
+                    >
+                      Bloquear
+                    </span>
+                  </button>
+                  <button className="flex w-full items-center justify-center p-1 rounded hover:bg-slate-200">
+                    <img
+                      src="https://img.icons8.com/?size=100&id=85077&format=png&color=ffffff"
+                      alt=" power icon"
+                      className="w-5"
+                    />
+                    <p
+                      className="flex font-normal text-base w-full h-11/12 px-2 py-1 rounded "
+                      onClick={() => {
+                        handlePowerMenuToggle();
+                      }}
+                    >
+                      Apagar
+                    </p>
+                  </button>
                 </div>
               )}
             </div>

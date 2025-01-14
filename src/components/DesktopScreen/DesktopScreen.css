@@ -38,7 +38,7 @@
 .start-menu {
     position: absolute;
     backdrop-filter: blur(24px);
-    background-color: rgba(23, 23, 23, 0.7);
+    background-color: #171717b3;
     width: 25%;
     height: 60%;
     bottom: 6.5%;

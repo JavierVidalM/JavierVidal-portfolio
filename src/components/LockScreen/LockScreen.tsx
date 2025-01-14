@@ -67,6 +67,11 @@ function LockScreen({ onUnlock }: { onUnlock: () => void }) {
     fetchWeather();
   }, [time]);
 
+
+
+
+
+
   if (isLoading) {
     return (
       <div className="flex w-screen h-screen items-center justify-center">
@@ -74,6 +79,11 @@ function LockScreen({ onUnlock }: { onUnlock: () => void }) {
       </div>
     );
   }
+
+
+
+
+
   const now = new Date();
   const day = now.toLocaleDateString("en-US", { weekday: "long" });
   const date = now.toLocaleDateString("en-GB", {
@@ -105,6 +115,12 @@ function LockScreen({ onUnlock }: { onUnlock: () => void }) {
     setScreenPosition(0);
     // }
   };
+
+  const handleUnlock = () => {
+    localStorage.setItem("isLocked", "false");
+    setIsFocused(true);
+    onUnlock();
+  }
 
   return (
     <div
@@ -217,10 +233,7 @@ function LockScreen({ onUnlock }: { onUnlock: () => void }) {
                 <p className="text-2xl text-white">Javier Vidal</p>
                 <button
                   className="mt-14 bg-slate-300/10 py-2 px-6 rounded text-white font-extralight hover:bg-slate-400/10 transition-all duration-300"
-                  onClick={() => {
-                    setIsFocused(true);
-                    onUnlock();
-                  }}
+                  onClick={handleUnlock}
                 >
                   Ingresar
                 </button>

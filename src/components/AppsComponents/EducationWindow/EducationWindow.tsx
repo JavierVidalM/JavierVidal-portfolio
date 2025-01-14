@@ -3,6 +3,7 @@ import {
   codeBlockPlugin,
   codeMirrorPlugin,
   diffSourcePlugin,
+  DiffSourceToggleWrapper,
   directivesPlugin,
   frontmatterPlugin,
   headingsPlugin,
@@ -27,7 +28,7 @@ import WindowComponent from "../../WindowComponent.tsx/WindowComponent";
 import "./EducationWindow.css";
 
 function EducationWindow({ item, onClose, onMinimize }: WindowTypes) {
-  const [colorTheme, setColorTheme] = useState<"light" | "dark">("light");
+  const [isDarkTheme, setIsDarkTheme] = useState<boolean>(window.localStorage.getItem("EducationWindowTheme") === "dark" ? true : false);
 
   const defaultSnippetContent = `
   export default function App() {
@@ -48,7 +49,7 @@ function EducationWindow({ item, onClose, onMinimize }: WindowTypes) {
         name: "react",
         meta: "live react",
         sandpackTemplate: "react",
-        sandpackTheme: colorTheme,
+        sandpackTheme: isDarkTheme ? "dark" : "light",
         snippetFileName: "/App.js",
         snippetLanguage: "jsx",
         initialSnippetContent: defaultSnippetContent,
@@ -95,7 +96,8 @@ function EducationWindow({ item, onClose, onMinimize }: WindowTypes) {
 
 
   const toggleColorTheme = () => {
-    setColorTheme(colorTheme === "light" ? "dark" : "light");
+    window.localStorage.setItem("EducationWindowTheme", JSON.stringify(!isDarkTheme ? "dark" : "light"));
+    setIsDarkTheme(!isDarkTheme);
   };
 
   return (
@@ -104,23 +106,23 @@ function EducationWindow({ item, onClose, onMinimize }: WindowTypes) {
       onClose={onClose}
       onMinimize={onMinimize}
       className={`${
-        colorTheme === "dark" ? "bg-black" : "bg-white"
+        isDarkTheme ? "bg-black" : "bg-white"
       }`}
     >
       <div className="px-4 w-full h-full min-w">
         <MDXEditor
           markdown={educationMarkdown}
-          className={colorTheme === "dark" ? "dark-theme dark-editor" : ""}
+          className={isDarkTheme ? "dark-theme dark-editor" : ""}
           contentEditableClassName={`
             ${
-              colorTheme === "light"
-                ? "bg-white text-black prose-headings:text-black prose-strong:text-black prose-blockquote:text-black prose-blockquote:border-gray-300"
-                : ""
+              isDarkTheme
+              ? ""
+              : "bg-white text-black prose-headings:text-black prose-strong:text-black prose-blockquote:text-black prose-blockquote:border-gray-300"
             }
           max-w-none min-h-screen text-lg px-8 py-5 caret-yellow-500 
           prose prose-invert prose-p:my-3 prose-p:leading-relaxed prose-headings:my-4 prose-blockquote:my-4 
           prose-ul:my-2 prose-li:my-0 prose-code:px-1 prose-code:text-red-500 
-          prose-code:before:content-[''] prose-code:after:content-['']
+          prose-code:before:content-[''] prose-code:after:content-[''] prose-mdxeditor-source-editor:bg-red-500
           `}
           spellCheck={false}
           onChange={console.log}
@@ -154,24 +156,25 @@ function EducationWindow({ item, onClose, onMinimize }: WindowTypes) {
             toolbarPlugin({
               toolbarContents: () => (
                 <>
+                {/* <DiffSourceToggleWrapper children={<></>} /> */}
                   <KitchenSinkToolbar />
                   <button
                     className={`flex items-center p-1 rounded ${
-                      colorTheme === "light"
+                      isDarkTheme
                         ? "hover:bg-[#e0e1e6]"
                         : "hover:bg-[#323035]"
                     } mx-3`}
                     onClick={toggleColorTheme}
                   >
-                    {colorTheme === "light" ? (
+                    {isDarkTheme ? (
                       <img
-                        src="https://img.icons8.com/?size=50&id=82718&format=png&color=000000"
+                        src="https://img.icons8.com/?size=50&id=82718&format=png&color=ffffff"
                         alt="Sun icon"
                         className="h-5"
                       />
                     ) : (
                       <img
-                        src="https://img.icons8.com/?size=50&id=nFyQsDayBOW1&format=png&color=ffffff"
+                        src="https://img.icons8.com/?size=50&id=nFyQsDayBOW1&format=png&color=000000"
                         alt="Moon icon"
                         className="h-5"
                       />

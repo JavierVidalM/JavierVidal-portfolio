@@ -1,3 +1,5 @@
+import minecraftLogo from "../assets/minecraft.svg";
+
 export const defaultItems = [
   {
     id: 1,
@@ -26,7 +28,7 @@ export const defaultItems = [
     col: 1,
     prevRow: 4,
     prevCol: 1,
-    icon: "⚙️",
+    icon: minecraftLogo,
     selected: false,
   },
   {
@@ -56,8 +58,18 @@ export const defaultItems = [
     col: 1,
     prevRow: 7,
     prevCol: 1,
-    icon: "📞",
+    icon: "https://img.icons8.com/?size=100&id=ut6gQeo5pNqf&format=png&color=000000",
     selected: false,
   },
+  {
+    id: 7,
+    name: "Ajustes",
+    row: 0,
+    col: 0,
+    prevRow: 0,
+    prevCol: 0,
+    icon: "https://img.icons8.com/?size=100&id=s5NUIabJrb4C&format=png&color=000000",
+    selected: false,
+  }
   // Agrega más elementos por defecto aquí
 ];
