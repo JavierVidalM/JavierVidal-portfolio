@@ -7,6 +7,7 @@ import {
   getWeatherConditionIcon,
 } from "../../utils/getWheaterConditions";
 import "./LockScreen.css";
+import LoadingScreen from "../LoadingScreen/LoadingScreen";
 
 function LockScreen({ onUnlock }: { onUnlock: () => void }) {
   const [time, setTime] = useState<string>("00:00");
@@ -42,29 +43,32 @@ function LockScreen({ onUnlock }: { onUnlock: () => void }) {
   }, []);
 
   useEffect(() => {
-    const fetchWeather = async () => {
-      try {
-        if (!apiUrl) {
-          throw new Error("WEATHER_API_URL is not defined");
+    if (!window.localStorage.getItem("weatherData")) {
+      const fetchWeather = async () => {
+        try {
+          if (!apiUrl) {
+            throw new Error("WEATHER_API_URL is not defined");
+          }
+          const response = await axios.get(apiUrl);
+          const weather = await getWeatherConditionDetail(
+            response.data.current_condition[0].weatherDesc[0].value.split(",")[0]
+          );
+          setWeatherCondition(weather);
+          setWeather(response.data);
+          const icon = await getWeatherConditionIcon(
+            response.data.current_condition[0].weatherDesc[0].value.split(",")[0]
+          );
+          setWeatherIcon(icon);
+          window.localStorage.setItem("weatherData", JSON.stringify(response.data));
+        } catch (error) {
+          console.error("Error fetching weather data: ", error);
+        } finally {
+          setIsLoading(false);
         }
-        const response = await axios.get(apiUrl);
-        const weather = await getWeatherConditionDetail(
-          response.data.current_condition[0].weatherDesc[0].value.split(",")[0]
-        );
-        setWeatherCondition(weather);
-        setWeather(response.data);
-        const icon = await getWeatherConditionIcon(
-          response.data.current_condition[0].weatherDesc[0].value.split(",")[0]
-        );
-        setWeatherIcon(icon);
-      } catch (error) {
-        console.error("Error fetching weather data: ", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+      };
+      fetchWeather();
+    }
 
-    fetchWeather();
   }, [time]);
 
 
@@ -73,11 +77,8 @@ function LockScreen({ onUnlock }: { onUnlock: () => void }) {
 
 
   if (isLoading) {
-    return (
-      <div className="flex w-screen h-screen items-center justify-center">
-        <p className="text-white">Loading...</p>
-      </div>
-    );
+    // <LoadingScreen />;
+    return (<LoadingScreen />)
   }
 
 
@@ -171,8 +172,8 @@ function LockScreen({ onUnlock }: { onUnlock: () => void }) {
               }}
             >
               <p className="text-white font-medium text-md">
-                {weather.nearest_area[0].areaName[0].value},{" "}
-                {weather.nearest_area[0].country[0].value}
+                {weather.nearest_area[0].areaName[0].value ?? "N/a" },{" "}
+                {weather.nearest_area[0].country[0].value ?? "N/a" }
               </p>
               <div className="flex align-middle items-center">
                 <div className="flex align-middle items-center">

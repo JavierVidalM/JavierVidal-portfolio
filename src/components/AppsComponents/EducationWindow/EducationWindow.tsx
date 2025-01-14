@@ -3,7 +3,6 @@ import {
   codeBlockPlugin,
   codeMirrorPlugin,
   diffSourcePlugin,
-  DiffSourceToggleWrapper,
   directivesPlugin,
   frontmatterPlugin,
   headingsPlugin,

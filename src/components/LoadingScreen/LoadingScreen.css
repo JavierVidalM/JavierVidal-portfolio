@@ -1,0 +1,22 @@
+.loader {
+    border: 6px solid transparent; /* Transparent border */
+    border-top: 6px solid white; /* White line */
+    border-radius: 50%; /* Circular shape */
+    width: 120px;
+    height: 120px;
+    animation: spin 1.4s ease-in-out infinite; /* Acceleration and deceleration */
+}
+
+@keyframes spin {
+    0% { transform: rotate(140deg); }
+    100% { transform: rotate(500deg); }
+}
+
+.loader-container {
+    background-color: black;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
